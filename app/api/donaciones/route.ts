@@ -1,12 +1,10 @@
 import { NextResponse } from 'next/server'
-import { prisma } from '@/src/lib/prisma'
+import { donacionService } from '@/src/service/donacion.service'
 
-// GET /api/donaciones → listar todas las donaciones (lo usa el coordinador)
+// GET /api/donaciones → listar todas (lo usa el coordinador)
 export async function GET() {
   try {
-    const donaciones = await prisma.donacion.findMany({
-      orderBy: { fecha: 'desc' },
-    })
+    const donaciones = await donacionService.listarTodas()
     return NextResponse.json(donaciones)
   } catch (error) {
     return NextResponse.json(
@@ -16,44 +14,14 @@ export async function GET() {
   }
 }
 
-// POST /api/donaciones → crear una donación (lo usa el donante)
+// POST /api/donaciones → crear (lo usa el donante)
 export async function POST(request: Request) {
   try {
     const body = await request.json()
-    const { tipo, cantidad, unidad, origen, donanteNombre, donanteCorreo } = body
-
-    // Validación básica
-    if (!tipo || !cantidad || !unidad || !origen) {
-      return NextResponse.json(
-        { error: 'Faltan campos obligatorios: tipo, cantidad, unidad, origen' },
-        { status: 400 }
-      )
-    }
-
-    // Creamos (o reutilizamos) el donante por su correo, y la donación
-    const donacion = await prisma.donacion.create({
-      data: {
-        tipo,
-        cantidad: Number(cantidad),
-        unidad,
-        origen,
-        estado: 'PENDIENTE', // arranca en PENDIENTE (promesa de donación)
-        donante: donanteCorreo
-          ? {
-              create: {
-                nombre: donanteNombre ?? 'Anónimo',
-                correo: donanteCorreo,
-              },
-            }
-          : undefined,
-      },
-    })
-
+    const donacion = await donacionService.crear(body)
     return NextResponse.json(donacion, { status: 201 })
   } catch (error) {
-    return NextResponse.json(
-      { error: 'Error al crear la donación' },
-      { status: 500 }
-    )
+    const mensaje = error instanceof Error ? error.message : 'Error al crear la donación'
+    return NextResponse.json({ error: mensaje }, { status: 400 })
   }
 }

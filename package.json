@@ -1,5 +1,6 @@
 {
   "name": "backend-donaton",
+  "type": "module",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -8,11 +9,15 @@
     "start": "next start"
   },
   "dependencies": {
+    "@prisma/adapter-mariadb": "^7.8.0",
+    "@prisma/client": "^7.8.0",
+    "dotenv": "^17.4.2",
     "next": "16.2.9"
   },
   "devDependencies": {
-    "@types/node": "^20",
+    "@types/node": "^20.19.43",
     "@types/react": "^19",
+    "prisma": "^7.8.0",
     "typescript": "^5"
   }
 }

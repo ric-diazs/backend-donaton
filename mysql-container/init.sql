@@ -1,0 +1,3 @@
+CREATE DATABASE IF NOT EXISTS shadow_donaton_db;
+GRANT CREATE ON *.* TO 'donaton'@'%';
+FLUSH PRIVILEGES;

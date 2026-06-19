@@ -178,4 +178,5 @@ model Comuna {
 
   necesidades   Necesidad[]
   centrosAcopio CentroAcopio[]
+
 }

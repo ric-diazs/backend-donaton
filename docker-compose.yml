@@ -1,19 +1,28 @@
 services:
     db-mysql:
+    # Servicio que levanta un contenedor con MySQL para la API.
         build:
+            # Ruta del contexto de build para usar el Dockerfile de ./mysql-container.
             context: ./mysql-container
+        # Nombre fijo del contenedor
         container_name: db_mysql
+        # Reinicia automáticamente el contenedor salvo que se detenga explícitamente.
         restart: unless-stopped
         ports:
+            # Mapea el puerto MySQL del contenedor al host.
             - "3306:3306"
         environment:
+            # Variables de entorno para iniciar base de datos
             - MYSQL_DATABASE=${DATABASE_NAME}
             - MYSQL_USER=${DATABASE_USER}
             - MYSQL_PASSWORD=${DATABASE_PASSWORD}
             - MYSQL_ROOT_PASSWORD=${ROOT_PASSWORD}
         volumes:
+            # Persistencia de datos de MySQL entre reinicios/recreaciones.
             - mysql-data:/var/lib/mysql
+            # Script SQL inicial para poblar/crear objetos al primer arranque.
             - ./mysql-container/init.sql:/docker-entrypoint-initdb.d/init.sql
 
+# Volumen administrado por Docker para persistir el directorio de datos de MySQL.
 volumes:
     mysql-data:
